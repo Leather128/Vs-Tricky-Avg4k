@@ -18,7 +18,7 @@ void Text::setText(std::string temp)
 	}
 	TTF_SetFontOutline(Arial, 0);
 	SDL_Surface* surfaceMessage =
-		TTF_RenderText_Blended(Arial, c, { 255, 255,255 });
+		TTF_RenderText_Blended(Arial, c, {255, 255,255});
 	
 	if (surfaceMessage != nullptr)
 	{

@@ -171,14 +171,19 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                 if (iss.str().find(":") != std::string::npos) {
                     stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ':'), stuff[0].end());
                     stuff[0].erase(std::remove(stuff[0].begin(), stuff[0].end(), ' '), stuff[0].end());
+
                     switch (diffIndex) {
-                    case 1:
-                        meta.difficulties.back().charter = stuff[0];
-                        break;
-                    case 2:
-                        meta.difficulties.back().name = stuff[0];
-                        break;
+                        case 0:
+                            meta.difficulties.back().type = stuff[0];
+                            break;
+                        case 1:
+                            meta.difficulties.back().charter = stuff[0];
+                            break;
+                        case 2:
+                            meta.difficulties.back().name = stuff[0];
+                            break;
                     }
+
                     diffIndex++;
                 }
                 else {
@@ -209,6 +214,7 @@ SMFile::SMFile(std::string path, std::string folder, bool doReplace = true) {
                                 note.killed = false;
                                 note.played = false;
                                 note.lane = n;
+
                                 if (thing != 'M')
                                 {
                                     switch (thing)

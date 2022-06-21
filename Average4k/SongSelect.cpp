@@ -36,21 +36,18 @@ void SongSelect::updateList() {
 
 	infoText->setText("F5 to refresh - " + std::to_string(listOfCharts.size()) + " Charts loaded");
 	infoText->centerX();
-
-
+	
 	if (listOfCharts.size() != 0)
 	{
-
 		switchChart(listOfCharts[0]);
 
 		song& selectedChart = listOfCharts[selectedIndex];
 		std::string name = currentChart->meta.songName;
 		std::string diff = currentChart->meta.difficulties[selectedDiffIndex].name;
 
-		songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+		songName->setText("> " + currentChart->meta.songName + " (" + diff + ") <");
 		songName->centerX();
 	}
-	
 }
 
 void SongSelect::update(Events::updateEvent event)
@@ -95,7 +92,7 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 
 			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
 
-			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") <");
 			songName->centerX();
 
 			if (listOfCharts[selectedIndex].steam)
@@ -131,9 +128,8 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 
 			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
 
-			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") <");
 			songName->centerX();
-
 
 			break;
 		case SDLK_LEFT:
@@ -145,7 +141,7 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 
 			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
 
-			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") <");
 			songName->centerX();
 
 
@@ -159,7 +155,7 @@ void SongSelect::keyDown(SDL_KeyboardEvent event)
 
 			diff = currentChart->meta.difficulties[selectedDiffIndex].name;
 
-			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") ");
+			songName->setText("> " + currentChart->meta.songName + " (" + diff + ") <");
 			songName->centerX();
 
 			break;
@@ -200,11 +196,15 @@ void SongSelect::create() {
 	rect->alpha = 0.3;
 	add(rect);
 
-	songName = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 200, "No songs loaded", 24, "NotoSans-Regular");
+	songName = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 200, "No songs loaded", 24, "vcr");
 	songName->centerX();
 	songName->centerY();
 
 	songName->create();
+
+	songName->border = true;
+	songName->borderSize = 2;
+
 	add(songName);
 
 	if (!currentChart)
@@ -212,8 +212,10 @@ void SongSelect::create() {
 
 	currentChart = NULL;
 
-	infoText = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 275, "", 24, "NotoSans-Regular");
+	infoText = new Text(Game::gameWidth / 2, (Game::gameHeight / 2) - 275, "", 24, "vcr");
 	infoText->create();
+	infoText->border = true;
+	infoText->borderSize = 2;
 	add(infoText);
 
 	selectedSong = (song*)malloc(sizeof(song)); // REMEMBER TO FREE THIS KADE PLEASE (- kade from the past)

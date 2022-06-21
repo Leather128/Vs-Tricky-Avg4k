@@ -8,6 +8,9 @@
 #include "TweenManager.h"
 #include "Helpers.h"
 #include "Offseter.h"
+#include <psapi.h>
+#include <limits.h>
+
 using namespace std;
 
 
@@ -73,6 +76,8 @@ bool Game::startConnect = false;
 bool transCompleted = false;
 
 HANDLE multiThreadHandle;
+
+PROCESS_MEMORY_COUNTERS pmc;
 
 void Game::setViewpointX(float x)
 {
@@ -174,8 +179,6 @@ void Game::createGame()
 	fpsText->border = true;
 	fpsText->borderSize = 2;
 	fpsText->borderColor = { 0,0,0 };
-
-
 }
 
 
@@ -191,7 +194,7 @@ void Game::mouseButtonDown()
 	}
 }
 
-
+float dumbTimer = 0;
 
 void Game::update(Events::updateEvent update)
 {
@@ -217,9 +220,6 @@ void Game::update(Events::updateEvent update)
 
 	if (currentMenu != nullptr && currentMenu->created)
 		currentMenu->update(update);
-
-	if (!transitioning)
-		fpsText->setText("FPS: " + std::to_string((int)gameFPS));
 
 	for (int i = 0; i < objects->size(); i++)
 	{
@@ -255,8 +255,10 @@ void Game::update(Events::updateEvent update)
 		{
 			Tweening::TweenManager::activeTweens.erase(std::remove(Tweening::TweenManager::activeTweens.begin(), Tweening::TweenManager::activeTweens.end(), tw), Tweening::TweenManager::activeTweens.end());
 		}
+
 		Tweening::TweenManager::tweenRemove.clear();
 	}
+
 	if (currentMenu != NULL)
 	{
 		if (currentMenu->created)
@@ -275,7 +277,6 @@ void Game::update(Events::updateEvent update)
 	{
 		fpsText->draw();
 	}
-
 
 	if (debugConsole)
 	{
@@ -345,6 +346,20 @@ void Game::update(Events::updateEvent update)
 
 
 	//SDL_RenderPresent(renderer);
+
+	dumbTimer += Game::deltaTime;
+
+	if (dumbTimer >= 500)
+	{
+		dumbTimer = 0;
+
+		if (!transitioning)
+		{
+			GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
+
+			fpsText->setText("FPS: " + std::to_string((int)gameFPS) + " | RAM: " + std::to_string(pmc.WorkingSetSize / 1000000) + " mb");
+		}
+	}
 }
 
 void Game::keyDown(SDL_KeyboardEvent ev)

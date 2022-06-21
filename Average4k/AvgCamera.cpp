@@ -121,11 +121,10 @@ void AvgCamera::draw()
 	if (clipRect.w > 0 || clipRect.h > 0)
 		Rendering::SetClipRect(&clipRect);
 
-
 	Rendering::PushQuad(&dstRect, &srcRect, ctb, GL::genShader);
 
-	if (!glGetError())
-		std::cout << "error: " << glGetError() << std::endl;
+	if (glGetError() != 0)
+		std::cout << "error: " << glGetError() << "\n";
 
 	if (tint.r != -1)
 	{

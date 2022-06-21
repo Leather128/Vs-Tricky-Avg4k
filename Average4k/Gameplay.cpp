@@ -165,12 +165,10 @@ void Gameplay::removePhase()
 
 void Gameplay::removeNote(NoteObject* object)
 {
-	spawnedNotes.erase(
-		std::remove_if(spawnedNotes.begin(), spawnedNotes.end(), [&](NoteObject* const nn) {
-			return nn->beat == object->beat && nn->lane == object->lane;
-			}),
-		spawnedNotes.end());
+	spawnedNotes.erase(find(spawnedNotes.begin(), spawnedNotes.end(), object));
+
 	removeObj(object);
+
 	delete object;
 }
 
@@ -325,12 +323,15 @@ void Gameplay::create() {
 
 	if (SongSelect::currentChart->meta.folder.ends_with("ImprobableOutset"))
 		stage = new Stage("assets/stages/nevada");
-	if (SongSelect::currentChart->meta.folder.ends_with("Madness"))
+	else if (SongSelect::currentChart->meta.folder.ends_with("Madness"))
 		stage = new Stage("assets/stages/spookyNevada");
-	if (SongSelect::currentChart->meta.folder.ends_with("Hellclown"))
+	else if (SongSelect::currentChart->meta.folder.ends_with("Hellclown"))
 		stage = new Stage("assets/stages/hellNevada");
-	if (SongSelect::currentChart->meta.folder.ends_with("Expurgation"))
+	else if (SongSelect::currentChart->meta.folder.ends_with("Expurgation"))
 		stage = new Stage("assets/stages/exNevada");
+	else
+		stage = new Stage("assets/stages/stage");
+
 	for (AvgGroup* group : stage->returnUsedLayers())
 	{
 		camGame->add(group);
@@ -380,13 +381,16 @@ void Gameplay::create() {
 	for (int i = 0; i < 4; i++)
 	{
 		AvgSprite* r;
+
 		float x = ((Game::gameWidth / 2)) 
 			- ((104 * Game::save->GetDouble("Note Size") + 2) * 5) 
 			+ ((104 * Game::save->GetDouble("Note Size") + 2) * i);
+
 		if (downscroll)
-			r = new AvgSprite(x, (Game::gameHeight / 2) + 250, NULL);
+			r = new AvgSprite(x, Game::gameHeight - 100 - ((104 * Game::save->GetDouble("Note Size")) / 2), NULL);
 		else
 			r = new AvgSprite(x, (Game::gameHeight / 2) - 300, NULL);
+
 		r->dontDeleteTex = true;
 		r->tex = noteskin;
 		r->setSparrow("assets/graphical/fnfBase/Arrows.xml");
@@ -406,9 +410,10 @@ void Gameplay::create() {
 			+ ((104 * Game::save->GetDouble("Note Size") + 2) * i)) - 52;
 
 		if (downscroll)
-			r = new AvgSprite(x - 52, (Game::gameHeight / 2) + 250, NULL);
+			r = new AvgSprite(x - 52, Game::gameHeight - 100 - ((104 * Game::save->GetDouble("Note Size")) / 2), NULL);
 		else
 			r = new AvgSprite(x - 52, (Game::gameHeight / 2) - 300, NULL);
+
 		r->dontDeleteTex = true;
 		r->tex = noteskin;
 		r->setSparrow("assets/graphical/fnfBase/Arrows.xml");
@@ -428,6 +433,10 @@ void Gameplay::create() {
 	}
 
 	healthBG = new AvgSprite(Game::gameWidth / 2, Game::gameHeight * 0.9, "assets/graphical/fnfBase/healthBar.png");
+
+	if (downscroll)
+		healthBG->y = Game::gameHeight * 0.1;
+
 	camHud->add(healthBG);
 
 	scoreTxt = new Text(0, 0, "t", 16, "vcr");
@@ -440,18 +449,24 @@ void Gameplay::create() {
 	healthBG->x -= healthBG->w / 2;
 
 	healthProgP2 = new AvgRect(healthBG->x + 4, (Game::gameHeight * 0.9) + 4, 0, healthBG->h - 8);
+
+	if(downscroll)
+		healthProgP2->y = (Game::gameHeight * 0.1) + 4;
+
 	camHud->add(healthProgP2);
-	healthProgP2->c = { 255,0,0 };
+	healthProgP2->c = stage->p2->iconColor;
 
 	healthProgP1 = new AvgRect(healthBG->x, (Game::gameHeight * 0.9) + 4, 0, healthBG->h - 8);
+
+	if (downscroll)
+		healthProgP1->y = (Game::gameHeight * 0.1) + 4;
+
 	camHud->add(healthProgP1);
-	healthProgP1->c = { 0,255,0 };
+	healthProgP1->c = stage->p1->iconColor;
 
 	healthBG->staticView = true;
 	healthProgP2->staticView = true;
 	healthProgP1->staticView = true;
-
-	camHud->add(scoreTxt);
 
 	iconP1 = new AvgSprite(120, 0, NULL);
 	iconP1->tex = stage->p1->icon;
@@ -467,10 +482,12 @@ void Gameplay::create() {
 	iconP1->offsetY = stage->p1->iconOffset.y;
 
 
-	add(iconP1);
-	add(iconP2);
+	camHud->add(iconP1);
+	camHud->add(iconP2);
 
-	add(icons);
+	camHud->add(icons);
+
+	camHud->add(scoreTxt);
 
 	iconP1->w = iconP1->tex->width / 2;
 	iconP1->h = iconP1->tex->height;
@@ -483,7 +500,6 @@ void Gameplay::create() {
 
 	iconP1->staticView = true;
 	iconP2->staticView = true;
-
 
 	songPosBar = new AvgRect(receptors[0]->x, 24, ((receptors[3]->x + (104 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength)), 24);
 	//camHud->add(songPosBar);
@@ -507,6 +523,24 @@ void Gameplay::create() {
 
 	startSprite->scale = 0.65;
 	camHud->add(startSprite);
+
+	Text* songName = new Text(0, 0, SongSelect::currentChart->meta.songName + " - " + SongSelect::currentChart->meta.difficulties[SongSelect::selectedDiffIndex].name, 16, "vcr");
+	songName->create();
+
+	songName->border = true;
+	songName->borderSize = 1.2;
+	songName->borderColor = { 0,0,0 };
+	songName->staticView = true;
+
+	if(downscroll)
+		songName->y = Game::gameHeight - songName->h - 4;
+	else
+		songName->y = 4;
+
+	songName->setText(SongSelect::currentChart->meta.songName + " - " + SongSelect::currentChart->meta.difficulties[SongSelect::selectedDiffIndex].name);
+	songName->centerX();
+
+	camHud->add(songName);
 
 	updateAccuracy(-1);
 
@@ -575,8 +609,10 @@ void Gameplay::update(Events::updateEvent event)
 					SoundManager::removeChannel("startChannel");
 					startSound = SoundManager::createChannel("assets/sounds/intro3.ogg", "startChannel");
 					positionInSong = 0;
+					startSprite->alpha = 0;
 					break;
 				}
+
 				if (positionInSong < 0 && startProg > 0 && startProg < 3)
 				{
 					startSprite->x = (Game::gameWidth / 2) - (startSprite->w / 2);
@@ -696,10 +732,14 @@ void Gameplay::update(Events::updateEvent event)
 			if (nn.del)
 			{
 				camHud->removeObj(nn.judgement);
-				for (AvgSprite* num : nn.numbers)
-					camHud->removeObj(num);
 
+				for (AvgSprite* num : nn.numbers)
+				{
+					if(num != NULL)
+						camHud->removeObj(num);
+				}
 			}
+
 			return nn.del;
 			}),
 		judgeAnims.end());
@@ -775,7 +815,7 @@ void Gameplay::update(Events::updateEvent event)
 
 	if (Game::mainCamera->scale > 1.000)
 	{
-		Game::mainCamera->scale = lerp(1, Game::mainCamera->scale, 0.95);
+		Game::mainCamera->scale = lerp(Game::mainCamera->scale, 1, 0.05 * (60.0 / Game::gameFPS));
 	}
 
 	if ((int)beat % 1 == 0 && lastIcon != (int)beat)
@@ -786,14 +826,14 @@ void Gameplay::update(Events::updateEvent event)
 	}
 
 	if (iconP1->scale > 1)
-		iconP1->scale = lerp(iconP1->scale, 1, .1);
+		iconP1->scale = lerp(iconP1->scale, 1, 0.15 * (60.0 / Game::gameFPS));
 	if (iconP2->scale > 1)
-		iconP2->scale = lerp(iconP2->scale, 1, .1);
+		iconP2->scale = lerp(iconP2->scale, 1, 0.15 * (60.0 / Game::gameFPS));
 
-	iconP1->y += (150 * (1 - iconP1->scale)) / 2;
+	//iconP1->y += (150 * (1 - iconP1->scale)) / 2;
 
 	iconP2->x += (150 * (1 - iconP2->scale));
-	iconP2->y += (150 * (1 - iconP2->scale)) / 2;
+	//iconP2->y += (150 * (1 - iconP2->scale)) / 2;
 
 	
 	songPosBar->w = ((receptors[3]->x + (104 * Game::save->GetDouble("Note Size"))) - receptors[0]->x) * (positionInSong / (songLength));
@@ -801,8 +841,6 @@ void Gameplay::update(Events::updateEvent event)
 	// underlay for accuracy
 
 	SDL_FRect overlayForAccuracy;
-
-
 
 	// debug stuff
 
@@ -873,6 +911,10 @@ void Gameplay::update(Events::updateEvent event)
 
 				object->beat = (double) n.beat + stopBeatOffset;
 				object->lane = n.lane;
+
+				if (SongSelect::currentChart->meta.difficulties[SongSelect::selectedDiffIndex].type == "dance-single")
+					object->lane += 4;
+
 				object->staticView = true;
 
 				std::string suffix = " alone";

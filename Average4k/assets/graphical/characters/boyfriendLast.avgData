@@ -22,5 +22,9 @@ animOffset[singLEFT-MISS]: 84,54
 
 icon: boyfriend
 
+iconColor[r]: 49
+iconColor[g]: 176
+iconColor[b]: 209
+
 fps: 24
 defaultAnim: idle

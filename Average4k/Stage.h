@@ -40,7 +40,6 @@ public:
 		if (read->getValue("p2ViewOffset", "") != "")
 			dadOff = read->convertVec(read->getValue("p2ViewOffset", ""));
 
-
 		Game::mainView->zoom = std::stof(read->getValue("viewPointZoom",""));
 		defaultZoom = Game::mainView->zoom;
 		for (valueType t : sprites)

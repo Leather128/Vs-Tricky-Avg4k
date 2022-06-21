@@ -160,8 +160,9 @@ void NoteObject::draw() {
                 }
                 else
                 {
-                    nDstRect.y += 52;
-                    Rendering::PushQuad(&nDstRect, &srcRect, Gameplay::noteskin, GL::genShader, 90);
+                    nDstRect.y += nDstRect.h;
+                    
+                    Rendering::PushQuad(&nDstRect, &srcRect, Gameplay::noteskin, GL::genShader, 180);
                 }
             }
             if (clipRectCopy.w > 0 || clipRectCopy.h > 0)
@@ -171,9 +172,6 @@ void NoteObject::draw() {
     dstRect.h = rect.h;
 
     dstRect.y = rect.y;
-
-
-   
 
     int activeH = 0;
 

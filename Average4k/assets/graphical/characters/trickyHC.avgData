@@ -19,5 +19,9 @@ shake: true
 
 icon: trickyH
 
+iconColor[r]: 204
+iconColor[g]: 204
+iconColor[b]: 204
+
 fps: 24
 defaultAnim: idle

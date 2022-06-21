@@ -16,6 +16,10 @@ animOffset[spawn]: -111,-121
 
 icon: ex
 
+iconColor[r]: 255
+iconColor[g]: 25
+iconColor[b]: 0
+
 # sprites were downscalled 0.6x
 offsetScale: 0.6
 

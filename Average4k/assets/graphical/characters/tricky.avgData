@@ -14,6 +14,10 @@ animOffset[singDOWN]: 6,-84
 
 icon: trickyMask
 
+iconColor[r]: 24
+iconColor[g]: 95
+iconColor[b]: 64
+
 # sprites were downscalled 0.5x
 offsetScale: 0.5
 

@@ -28,11 +28,8 @@ public:
 
 	void removeObj(Object* obj)
 	{
-		children.erase(
-			std::remove_if(children.begin(), children.end(), [&](Object* const ob) {
-				return ob->id == obj->id;
-				}),
-			children.end());
+		children.erase(find(children.begin(), children.end(), obj));
+
 		delete obj;
 	}
 

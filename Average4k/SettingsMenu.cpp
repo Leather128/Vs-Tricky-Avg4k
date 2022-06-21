@@ -1,19 +1,19 @@
 #include "SettingsMenu.h"
 #include "AvgSprite.h"
 
-
-
 void SettingsMenu::refreshList() {
 	selectedIndex = 0;
+
 	for (bruhhh t : settings)
 		removeObj(t.display);
+
 	settings.clear();
-	
 
 	for (int i = 0; i < Game::save->settings.size(); i++)
 	{
 		setting& set = Game::save->settings[i];
 		std::string value = "";
+
 		if (set.takesActive)
 			value = ": " + std::string((set.active ? " true" : " false"));
 		else
@@ -24,8 +24,12 @@ void SettingsMenu::refreshList() {
 
 		bruhhh h;
 
-		Text* t = new Text(0, 20 + (64 * i), set.name + value, 24, "NotoSans-Regular");
+		Text* t = new Text(0, 20 + (64 * i), set.name + value, 24, "vcr");
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
+
+		t->border = true;
+		t->borderSize = 2;
+
 		t->create();
 
 		h.display = t;
@@ -54,6 +58,10 @@ void SettingsMenu::setSelect(bruhhh& b)
 		value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)set->value));
 
 	std::string newText = "> " + std::string(set->name) + value;
+
+	t->border = true;
+	t->borderSize = 2;
+
 	t->setText(newText);
 	t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 }
@@ -75,6 +83,10 @@ void SettingsMenu::updateText(bruhhh& b)
 		value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)set->value));
 
 	std::string newText = std::string(set->name) + value;
+
+	t->border = true;
+	t->borderSize = 2;
+
 	t->setText(newText);
 	t->centerX();
 }
@@ -160,7 +172,8 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 		if (b.set->isKeybind)
 			value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)b.set->value));
 
-
+		t->border = true;
+		t->borderSize = 2;
 		t->setText(std::string(b.set->name) + value);
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		break;
@@ -178,6 +191,8 @@ void SettingsMenu::keyDown(SDL_KeyboardEvent event)
 			value = ": " + std::string(SDL_GetKeyName((SDL_Keycode)b.set->value));
 
 
+		t->border = true;
+		t->borderSize = 2;
 		t->setText(std::string(b.set->name) + value);
 		t->setX((Game::gameWidth / 2) - (t->surfW / 2));
 		break;

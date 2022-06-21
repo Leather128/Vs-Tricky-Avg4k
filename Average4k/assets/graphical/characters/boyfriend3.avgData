@@ -22,6 +22,10 @@ animOffset[singDOWN-MISS]: -11,-19
 
 icon: boyfriend
 
+iconColor[r]: 49
+iconColor[g]: 176
+iconColor[b]: 209
+
 # sprites were downscalled 0.5x
 offsetScale: 0.5
 

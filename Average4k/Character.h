@@ -2,11 +2,12 @@
 #include "includes.h"
 #include "AvgSprite.h"
 #include "Reader.h"
+#include "Text.h"
+
 struct specialAnim {
 	std::vector<int> frames;
 	std::string actualAnim;
 };
-
 
 class Character : public AvgSprite {
 private:
@@ -46,6 +47,8 @@ public:
 
 	Texture* icon;
 
+	Color iconColor;
+
 	Rect getIconSrc(int frame)
 	{
 		Rect r;
@@ -61,6 +64,7 @@ public:
 
 		return r;
 	}
+
 	Character(float x, float y, std::string charPath, Texture* toCopy) : AvgSprite(x, y, NULL)
 	{
 		read = new Reader(charPath);
@@ -106,7 +110,6 @@ public:
 			setAnimsFrames[t.key] = sp;
 		}
 
-
 		std::vector<valueType> offsetsS = read->getAllOfValue("animOffset");
 
 		for (valueType t : offsetsS)
@@ -130,10 +133,26 @@ public:
 			std::cout << "Icon offset: " << iconOffset.x << "," << iconOffset.y << std::endl;
 		}
 
+		if (read->getValue("iconColor", "r") != "")
+			iconColor.r = std::atoi(read->getValue("iconColor", "r").c_str());
+		else
+			iconColor.r = 255;
+
+		if (read->getValue("iconColor", "g") != "")
+			iconColor.g = std::atoi(read->getValue("iconColor", "g").c_str());
+		else
+			iconColor.g = 0;
+
+		if (read->getValue("iconColor", "b") != "")
+			iconColor.b = std::atoi(read->getValue("iconColor", "b").c_str());
+		else
+			iconColor.b = 0;
+
 		if (read->getValue("loop", "") == "")
 			loop = true;
 		else
 			loop = read->getValue("loop", "") == "false" ? false : true;
+
 		fps = std::stoi(read->getValue("fps", ""));
 		play(read->getValue("defaultAnim", ""));
 		std::cout << "loaded " + read->getValue("sheet", "") << std::endl;
@@ -208,6 +227,20 @@ public:
 			std::cout << "Icon offset: " << iconOffset.x << "," << iconOffset.y << std::endl;
 		}
 
+		if (read->getValue("iconColor", "r") != "")
+			iconColor.r = std::atoi(read->getValue("iconColor", "r").c_str());
+		else
+			iconColor.r = 255;
+
+		if (read->getValue("iconColor", "g") != "")
+			iconColor.g = std::atoi(read->getValue("iconColor", "g").c_str());
+		else
+			iconColor.g = 0;
+
+		if (read->getValue("iconColor", "b") != "")
+			iconColor.b = std::atoi(read->getValue("iconColor", "b").c_str());
+		else
+			iconColor.b = 0;
 
 		if (read->getValue("loop", "") == "")
 			loop = true;

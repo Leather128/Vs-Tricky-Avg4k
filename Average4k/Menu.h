@@ -38,7 +38,8 @@ public:
 	{
 		if (obj == NULL)
 			return;
-		cam->children.erase(std::remove(cam->children.begin(), cam->children.end(), obj), cam->children.end());
+		cam->children.erase(find(cam->children.begin(), cam->children.end(), obj));
+		//cam->children.erase(std::remove(cam->children.begin(), cam->children.end(), obj), cam->children.end());
 	}
 
 	void removeAll()
